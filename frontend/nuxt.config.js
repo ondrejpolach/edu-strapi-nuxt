@@ -45,6 +45,7 @@ export default {
   },
 
   strapi: {
-
-  }
+    entities: ['posts'],
+    url: process.env.BACKEND_URL || "http://localhost:1337"
+  },
 }

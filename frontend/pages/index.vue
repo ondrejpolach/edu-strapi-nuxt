@@ -2,9 +2,7 @@
   <div class="container">
     <div>
       <Logo />
-      <h1 class="title">
-        frontend
-      </h1>
+      <h1 class="title">frontend</h1>
       <div class="links">
         <a
           href="https://nuxtjs.org/"
@@ -23,12 +21,40 @@
           GitHub
         </a>
       </div>
+      <div v-if="error">
+        {{ error }}
+      </div>
+      <div class="posts" v-else>
+        <div class="post" v-for="post in posts" :key="post.id">
+          <img :src="imageUrlPrefix + post.Image.url" />
+          <h1>{{ post.Name }}</h1>
+          <p>
+            {{ post.Description }}
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-export default {}
+export default {
+  name: 'App',
+  data() {
+    return {
+      posts: [],
+      error: null,
+      imageUrlPrefix: process.env.NODE_ENV == 'production' ? '' : 'http://localhost:1337',
+    };
+  },
+  async fetch() {
+    try {
+      this.posts = await this.$strapi.$posts.find();
+    } catch (error) {
+      this.error = error;
+    }
+  },
+};
 </script>
 
 <style>
@@ -42,16 +68,8 @@ export default {}
 }
 
 .title {
-  font-family:
-    'Quicksand',
-    'Source Sans Pro',
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    'Helvetica Neue',
-    Arial,
-    sans-serif;
+  font-family: "Quicksand", "Source Sans Pro", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   display: block;
   font-weight: 300;
   font-size: 100px;
@@ -69,5 +87,19 @@ export default {}
 
 .links {
   padding-top: 15px;
+}
+
+.posts {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.post {
+  border: 1px solid #ccc;
+  padding: 15px;
+}
+
+.post img {
+  height: 200px;
 }
 </style>
